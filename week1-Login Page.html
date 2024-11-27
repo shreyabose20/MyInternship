@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Login Form</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        /* Container styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            background: url('bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards;
+        }
+
+        /* Form heading */
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            opacity: 0;
+            animation: fadeIn 0.8s 0.3s forwards;
+        }
+
+        /* Input styles */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.5s forwards;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* Button styles */
+        .button-group button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            animation: fadeInUp 0.8s 0.7s forwards;
+        }
+
+        /* Login button */
+        .login-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Forgot Password button */
+        .forgot-password {
+            background-color: transparent;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+
+        .forgot-password:hover {
+            background-color: #007bff;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Signup button */
+        .signup-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .signup-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Password validation styles */
+        .password-conditions {
+            text-align: left;
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .valid {
+            color: green;
+        }
+
+        .invalid {
+            color: red;
+        }
+
+        /* Hint popup styles */
+        #hint-popup {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            text-align: center;
+        }
+
+        #hint-popup button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #hint-popup button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h2>Login</h2>
+            <form onsubmit="return validateForm(event)">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required oninput="checkPassword()">
+                    <div id="password-conditions" class="password-conditions">
+                        <p id="length" class="invalid">Password must be at least 8 characters long</p>
+                        <p id="uppercase" class="invalid">Password must contain at least one uppercase letter</p>
+                        <p id="number" class="invalid">Password must contain at least one number</p>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="login-btn">Login</button>
+                    <button type="button" class="forgot-password" onclick="showHint()">Forgot Password?</button>
+                    <button type="button" class="signup-btn">Signup</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hint Popup -->
+    <div id="hint-popup">
+        <p>Enter your birthday to recover your password.</p>
+        <input type="date" id="birthday" placeholder="Enter your birthday">
+        <button onclick="closeHint()">Close</button>
+    </div>
+
+    <script>
+        // Password validation function
+        function validateForm(event) {
+            const password = document.getElementById("password").value;
+            const lengthCondition = document.getElementById("length");
+            const uppercaseCondition = document.getElementById("uppercase");
+            const numberCondition = document.getElementById("number");
+
+            let isValid = true;
+
+            // Validate password length
+            if (password.length >= 8) {
+                lengthCondition.classList.remove("invalid");
+                lengthCondition.classList.add("valid");
+                lengthCondition.innerHTML = "✔️ Password must be at least 8 characters long";
+            } else {
+                lengthCondition.classList.remove("valid");
+                lengthCondition.classList.add("invalid");
+                lengthCondition.innerHTML = "❌ Password must be at least 8 characters long";
+                isValid = false;
+            }
+
+            // Validate uppercase letter
+            if (/[A-Z]/.test(password)) {
+                uppercaseCondition.classList.remove("invalid");
+                uppercaseCondition.classList.add("valid");
+                uppercaseCondition.innerHTML = "✔️ Password must contain at least one uppercase letter";
+            } else {
+                uppercaseCondition.classList.remove("valid");
+                uppercaseCondition.classList.add("invalid");
+                uppercaseCondition.innerHTML = "❌ Password must contain at least one uppercase letter";
+                isValid = false;
+            }
+
+            // Validate at least one number
+            if (/\d/.test(password)) {
+                numberCondition.classList.remove("invalid");
+                numberCondition.classList.add("valid");
+                numberCondition.innerHTML = "✔️ Password must contain at least one number";
+            } else {
+                numberCondition.classList.remove("valid");
+                numberCondition.classList.add("invalid");
+                numberCondition.innerHTML = "❌ Password must contain at least one number";
+                isValid = false;
+            }
+
+            // Prevent form submission if the password is invalid
+            if (!isValid) {
+                event.preventDefault();
+                alert("Please ensure your password meets all the conditions.");
+            }
+        }
+
+        // Function to check password and update the conditions
+        function checkPassword() {
+            const password = document.getElementById("password").value;
+            const lengthCondition = document.getElementById("length");
+            const uppercaseCondition = document.getElementById("uppercase");
+            const numberCondition = document.getElementById("number");
+
+            // Check length condition
+            if (password.length >= 8) {
+                lengthCondition.classList.remove("invalid");
+                lengthCondition.classList.add("valid");
+                lengthCondition.innerHTML = "✔️ Password must be at least 8 characters long";
+            } else {
+                lengthCondition.classList.remove("valid");
+                lengthCondition.classList.add("invalid");
+                lengthCondition.innerHTML = "❌ Password must be at least 8 characters long";
+            }
+
+            // Check uppercase letter condition
+            if (/[A-Z]/.test(password)) {
+                uppercaseCondition.classList.remove("invalid");
+                uppercaseCondition.classList.add("valid");
+                uppercaseCondition.innerHTML = "✔️ Password must contain at least one uppercase letter";
+            } else {
+                uppercaseCondition.classList.remove("valid");
+                uppercaseCondition.classList.add("invalid");
+                uppercaseCondition.innerHTML = "❌ Password must contain at least one uppercase letter";
+            }
+
+            // Check number condition
+            if (/\d/.test(password)) {
+                numberCondition.classList.remove("invalid");
+                numberCondition.classList.add("valid");
+                numberCondition.innerHTML = "✔️ Password must contain at least one number";
+            } else {
+                numberCondition.classList.remove("valid");
+                numberCondition.classList.add("invalid");
+                numberCondition.innerHTML = "❌ Password must contain at least one number";
+            }
+        }
+
+        // Show the hint popup
+        function showHint() {
+            document.getElementById("hint-popup").style.display = "block";
+        }
+
+        // Close the hint popup
+        function closeHint() {
+            document.getElementById("hint-popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>
