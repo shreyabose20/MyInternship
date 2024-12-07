@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Slider</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .slider-container {
+            max-width: 900px;
+            margin: 50px auto;
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider {
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .slide.inactive {
+            opacity: 0;
+        }
+
+        .caption {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .thumbnails {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 40px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .thumbnail.active {
+            border-color: #007bff;
+        }
+
+        .controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .control {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 20px;
+        }
+
+        .control:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        @media (max-width: 600px) {
+            .caption {
+                font-size: 14px;
+                bottom: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slider-container">
+    <div class="slider" id="slider">
+        <div class="slide active">
+            <img src="https://via.placeholder.com/900x400?text=Image+1" alt="Image 1">
+            <div class="caption">Caption for Image 1</div>
+        </div>
+        <div class="slide">
+            <img src="https://via.placeholder.com/900x400?text=Image+2" alt="Image 2">
+            <div class="caption">Caption for Image 2</div>
+        </div>
+        <div class="slide">
+            <img src="https://via.placeholder.com/900x400?text=Image+3" alt="Image 3">
+            <div class="caption">Caption for Image 3</div>
+        </div>
+    </div>
+    <div class="controls">
+        <button class="control" onclick="changeSlide(-1)">❮</button>
+        <button class="control" onclick="changeSlide(1)">❯</button>
+    </div>
+</div>
+<div class="thumbnails" id="thumbnails">
+    <div class="thumbnail active" onclick="selectSlide(0)">
+        <img src="https://via.placeholder.com/900x400?text=Image+1" alt="Thumbnail 1">
+    </div>
+    <div class="thumbnail" onclick="selectSlide(1)">
+        <img src="https://via.placeholder.com/900x400?text=Image+2" alt="Thumbnail 2">
+    </div>
+    <div class="thumbnail" onclick="selectSlide(2)">
+        <img src="https://via.placeholder.com/900x400?text=Image+3" alt="Thumbnail 3">
+    </div>
+</div>
+
+<script>
+    let currentIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const thumbnails = document.querySelectorAll('.thumbnail');
+
+    function updateSlides(newIndex) {
+        slides[currentIndex].classList.remove('active');
+        slides[currentIndex].classList.add('inactive');
+        thumbnails[currentIndex].classList.remove('active');
+
+        currentIndex = newIndex;
+
+        slides[currentIndex].classList.add('active');
+        slides[currentIndex].classList.remove('inactive');
+        thumbnails[currentIndex].classList.add('active');
+    }
+
+    function changeSlide(direction) {
+        const newIndex = (currentIndex + direction + slides.length) % slides.length;
+        updateSlides(newIndex);
+    }
+
+    function selectSlide(index) {
+        updateSlides(index);
+    }
+</script>
+
+</body>
+</html>
